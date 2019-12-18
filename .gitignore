@@ -1,5 +1,6 @@
 .~*
 .scrapecache/*
+*.sh
 *.pyc
 *.log
 *.json
