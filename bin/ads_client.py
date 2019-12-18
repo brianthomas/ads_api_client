@@ -49,7 +49,8 @@ def pull_all_papers_by_year (api_token:str, year:int, fields:str)->str:
         # bump start
         start = start+2000
 
-    return papers
+    data = {'year': year, 'numFound': total_papers, 'docs' : papers} 
+    return data
 
 
 if __name__ == '__main__':  # use if csv of text
@@ -66,8 +67,7 @@ if __name__ == '__main__':  # use if csv of text
         logging.basicConfig(level=logging.DEBUG)
         LOG.setLevel(logging.DEBUG)
 
-    papers = {'year' : args.year}
-    papers['docs'] = pull_all_papers_by_year(args.token, args.year, args.fields)
+    papers = pull_all_papers_by_year(args.token, args.year, args.fields)
 
     #printing JSON to stdout
     print (json.dumps(papers))
