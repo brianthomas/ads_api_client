@@ -33,7 +33,7 @@ def pull_all_papers_by_year (api_token:str, year:int, fields:str)->str:
 
     #parse out total papers for that year
     total_papers = data['response']['numFound']
-    LOG.debug(f"Numb found: %s" % total_papers)
+    LOG.info(f"Num papers found for year:% => %s" % (year, total_papers))
 
     start = 0
     papers = []
@@ -68,7 +68,6 @@ if __name__ == '__main__':  # use if csv of text
 
     papers = {'year' : args.year}
     papers['docs'] = pull_all_papers_by_year(args.token, args.year, args.fields)
-    LOG.info(f"Number retrieved: %s" % len(papers))
 
     #printing JSON to stdout
     print (json.dumps(papers))
