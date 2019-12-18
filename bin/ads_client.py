@@ -33,7 +33,7 @@ def pull_all_papers_by_year (api_token:str, year:int, fields:str)->str:
 
     #parse out total papers for that year
     total_papers = data['response']['numFound']
-    LOG.info(f"Num papers found for year:% => %s" % (year, total_papers))
+    LOG.info(f"Num papers found for year:%s => %s" % (year, total_papers))
 
     start = 0
     papers = []
