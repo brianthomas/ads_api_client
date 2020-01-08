@@ -7,6 +7,7 @@
 *.pptx
 *.pkl
 *.pdf
+data/
 venv/
 .ipynb_checkpoints/*
 .DS_Store
