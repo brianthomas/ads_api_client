@@ -28,7 +28,7 @@ def is_nasa_grant_acknowledgement(doc:dict)->bool:
     return False
 
 
-def get_paper_nasa_status (doc:dict)->str:
+def get_paper_nasa_status (doc:dict, use_grants:bool=True)->str:
 
     status = "NO"
 
@@ -37,7 +37,7 @@ def get_paper_nasa_status (doc:dict)->str:
     
     if is_NASA_pub:
         status = "YES" # NASA_afiliation"
-    elif is_nasa_grant_acknowledgement(doc):
+    elif use_grants and is_nasa_grant_acknowledgement(doc):
         # check for acknowledgement as a grant
         status = "YES" # NASA_grant"
             
@@ -58,7 +58,7 @@ def contains_element(L1:list, L2:list)->bool:
         return True
     return False
 
-def gather_data(data_files:list, min_chars:int=99)->dict:
+def gather_data(data_files:list, use_grants:bool=False, min_chars:int=99)->dict:
     
     papers = dict()
     
@@ -71,13 +71,12 @@ def gather_data(data_files:list, min_chars:int=99)->dict:
         with open(data_file, encoding='utf-8-sig') as f:
             data = json.load(f)
             
-        #filtered_docs = [d for d in data['docs'] if contains_element(d['database'],allowed_database)]
         #filtered_docs = [d for d in data['docs'] if contains_element(d['database'], allowed_database) and 'astronomy' in d['database'] and 'abstract' in d and len(d['abstract']) > min_chars]
         #print (f"  got %s matches for filtered list" % len(filtered_docs))
         
         docs = []
         for doc in data['docs']:
-            doc['nasa-afil'] = get_paper_nasa_status(doc)
+            doc['nasa-afil'] = get_paper_nasa_status(doc, use_grants)
             docs.append(doc)
 
         # init our year of data
@@ -91,6 +90,7 @@ if __name__ == '__main__':  # use if csv of text
 
     ap = argparse.ArgumentParser(description='Script to add metadata for NASA afiliation.')
     ap.add_argument('-d', '--debug', default = False, action = 'store_true', help='Turn on debugging messages')
+    ap.add_argument('-g', '--use_grants', default = False, action = 'store_true', help='Toggle ON counting NASA grants as afiliated papers')
     ap.add_argument('-f', '--files', nargs='+', type=str, help="Files to process", required=True)
     ap.add_argument('-p', '--pretty_print', default = False, action = 'store_true', help='Turn on pretty printed JSON output.')
 
@@ -100,7 +100,7 @@ if __name__ == '__main__':  # use if csv of text
         logging.basicConfig(level=logging.DEBUG)
         LOG.setLevel(logging.DEBUG)
 
-    papers = gather_data(args.files)
+    papers = gather_data(args.files, args.use_grants)
     for year in papers.keys():
 
         #printing JSON to file with '.new' appended
