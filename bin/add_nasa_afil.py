@@ -6,14 +6,20 @@ NASA_grant_pattern = re.compile(r'NASA grant', re.IGNORECASE)
 
 
 def is_nasa_pub (doc:dict)->bool:
+
     # NASA afiliation list (from the ADS, see https://github.com/csgrant00/CanonicalAffiliations/blob/master/parent_child.tsv)
     NASA_Afiliations = ['A00676', 'A00948', 'A00677', 'A00678', 'A00680', 'A00681', 'A00682', 'A00684', 'A00685', 'A00686', 'A00687', 'A00688', 'A11075', 'A03987', 'A01099']
+
+    # other afilliated NASA funded institutions?
+    '''
     SpaceTel = 'A03671'
     IPAC = 'A01097'
-    # other afilliated NASA funded institutions?
+    NASA_afiliations.append(SpaceTel)
+    NASA_afiliations.append(IPAC)
+    '''
     
     # get the afiliation list and see if ANY of the listed afilliations matches a NASA institution
-    if 'afil_id' in doc:
+    if 'aff_id' in doc:
         for afil in doc['aff_id']:
             if afil in NASA_Afiliations:
                 return True
@@ -43,15 +49,6 @@ def get_paper_nasa_status (doc:dict, use_grants:bool=True)->str:
             
     return status
 
-def get_papers_nasa_status (docs:list)->dict:
-    # go thru docs and try to determine number of NASA publications 
-    status = dict()
-    for doc in docs:
-        doc_id = doc['bibcode']
-        status[doc_id] = get_paper_nasa_status(doc) 
-
-    return status
-
 def contains_element(L1:list, L2:list)->bool:
     test = [i for i in L1 if i in L2]
     if len(test) > 0:
@@ -62,8 +59,6 @@ def gather_data(data_files:list, use_grants:bool=False, min_chars:int=99)->dict:
     
     papers = dict()
     
-    # for each file, load and process our data
-    allowed_database = ['astronomy']
     # load our data
     for data_file in data_files:
         
@@ -73,15 +68,21 @@ def gather_data(data_files:list, use_grants:bool=False, min_chars:int=99)->dict:
             
         #filtered_docs = [d for d in data['docs'] if contains_element(d['database'], allowed_database) and 'astronomy' in d['database'] and 'abstract' in d and len(d['abstract']) > min_chars]
         #print (f"  got %s matches for filtered list" % len(filtered_docs))
-        
+
+        nasa_count = 0
         docs = []
         for doc in data['docs']:
-            doc['nasa-afil'] = get_paper_nasa_status(doc, use_grants)
+            is_nasa = get_paper_nasa_status(doc, use_grants)
+            if is_nasa == 'YES':
+                nasa_count += 1
+            doc['nasa-afil'] = is_nasa
             docs.append(doc)
 
         # init our year of data
         year = data['year']
         papers[year] = { 'year': year, 'numFound': len(docs), 'docs': docs } 
+
+        print (f"%s NASA afiliations found" % nasa_count)
         
     return papers
 
