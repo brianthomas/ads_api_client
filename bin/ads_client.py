@@ -57,7 +57,7 @@ if __name__ == '__main__':  # use if csv of text
 
     ap = argparse.ArgumentParser(description='Client to pull data about ADS papers by year.')
     ap.add_argument('-d', '--debug', default = False, action = 'store_true', help='Turn on debugging messages')
-    ap.add_argument('-f', '--fields', type=str, default="abstract,ack,aff,aff_id,arxiv_class,alternate_bibcode,bibcode,bibstem,citation_count,database,keyword,title", help='ADS paper fields to pull.', required=False)
+    ap.add_argument('-f', '--fields', type=str, default="author,abstract,ack,aff,aff_id,arxiv_class,alternate_bibcode,bibcode,bibstem,citation_count,database,keyword,title", help='ADS paper fields to pull.', required=False)
     ap.add_argument('-p', '--pretty_print', default = False, action = 'store_true', help='Turn on pretty printed JSON output.')
     ap.add_argument('-t', '--token', type=str, help='ADS API Token to use.', required=True)
     ap.add_argument('-y', '--year', type=int, help='Year to pull papers for.', required=True)
